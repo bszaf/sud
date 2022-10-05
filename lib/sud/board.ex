@@ -206,6 +206,11 @@ defmodule Sud.Board do
     row_validation(board) && col_validation(board) && block_validation(board)
   end
 
+  def validate_cell(board, row, col) do
+    row_validation(board, [row]) && col_validation(board, [col]) &&
+      block_validation(board, [identify_block(row, col)])
+  end
+
   def get_row(%__MODULE__{table: table}, row) do
     1..9
     |> Enum.map(&elem(table, element_index(row, &1)))
@@ -238,16 +243,16 @@ defmodule Sud.Board do
     List.flatten(res)
   end
 
-  defp row_validation(board) do
-    generic_validator(board, &get_row/2, 1..9)
+  defp row_validation(board, range \\ 1..9) do
+    generic_validator(board, &get_row/2, range)
   end
 
-  defp col_validation(board) do
-    generic_validator(board, &get_column/2, 1..9)
+  defp col_validation(board, range \\ 1..9) do
+    generic_validator(board, &get_column/2, range)
   end
 
-  defp block_validation(board) do
-    generic_validator(board, &get_block/2, 1..9)
+  defp block_validation(board, range \\ 1..9) do
+    generic_validator(board, &get_block/2, range)
   end
 
   defp generic_validator(board, retrieve_elements_fun, args) do
@@ -268,4 +273,14 @@ defmodule Sud.Board do
       end
     end)
   end
+
+  defp identify_block(row, col) when row in [1,2,3] and col in [1,2,3], do: 1
+  defp identify_block(row, col) when row in [1,2,3] and col in [4,5,6], do: 2
+  defp identify_block(row, col) when row in [1,2,3] and col in [7,8,9], do: 3
+  defp identify_block(row, col) when row in [4,5,6] and col in [1,2,3], do: 4
+  defp identify_block(row, col) when row in [4,5,6] and col in [4,5,6], do: 5
+  defp identify_block(row, col) when row in [4,5,6] and col in [7,8,9], do: 6
+  defp identify_block(row, col) when row in [7,8,9] and col in [1,2,3], do: 7
+  defp identify_block(row, col) when row in [7,8,9] and col in [4,5,6], do: 8
+  defp identify_block(row, col) when row in [7,8,9] and col in [7,8,9], do: 9
 end
