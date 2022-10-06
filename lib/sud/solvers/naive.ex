@@ -31,7 +31,7 @@ defmodule Sud.Solver.Naive do
       0 ->
         new_board = Board.set(board, row, col, value)
 
-        if Board.validate(new_board) do
+        if Board.validate_cell(new_board, row, col) do
           row_col = next_row_col(row, col)
           do_solve(new_board, row_col, 1)
         else
